@@ -8,5 +8,5 @@ Homework from UCLA CS180 taken Spring 2021 with Cho-Jui Hsieh
 | Homework 2 | 95    |
 | Homework 3 |       |
 | Homework 4 |       |
-| Midterm    |       |
+| Midterm    | 99    |
 | Final      |       |
