@@ -1,0 +1,87 @@
+\documentclass[10pt, letterpaper]{report}
+\usepackage[utf8]{inputenc}
+\usepackage{changepage}% http://ctan.org/pkg/changepage
+\newcommand\tab[1][1cm]{\hspace*{#1}}
+\title{CS 180 HW3}
+\author{Hanna Co}
+\date{Due: May 24, 2021}
+
+\begin{document}
+\maketitle
+\noindent \large{\textbf{1.} } \\
+Once a node is remove from the priority queue, the algorithm assumes that we have already found the shortest path to it. Take the graph with nodes A, B, and C, and edges (A, B, 5), (A, C, 3), (B, C, -5). If we run Dijkstra from A, we first look at A, and it's two outgoing edges. We then have $\pi$[B] = 5 and $\pi$[C] = 3. The next iteration looks at C, and sees that it had no outgoing edges, so it assumes that we have already found the shortest path from A to C, which has weight 3. However, this is not true, because if we take the path A $\rightarrow$ B $\rightarrow$ C, we see that this path has weight 0. So Dijkstra's algorithm fails here.
+
+\newpage
+\noindent \large{\textbf{2.} } \\
+If \(w' < w\)\\
+\tab return true (still a minimum spanning tree)\\
+Else \\
+\tab Let's remove $(u,v)$ from the MST\\
+\tab The MST is now split into two components, $A$ and $B$\\
+\tab $min$ = $w'$\\
+\tab For every edge $y$ in the graph:\\
+\tab\tab if $weight(y) < min$ and $y$ connects $A$ and $B$\\
+\tab\tab\tab return false (no longer an MST)\\
+\tab return true (still an MST)\\
+\\
+\textbf{\underline{Proof of correctness:}}\\
+The first case is fairly self explanatory: decreasing an edge in the MST preserves the properties of an MST. Let's look at the more complex case. Say our algorithm says our tree is still an MST, but there is in fact a shorter way to connect all the nodes. Given our algorithm, we know this is not possible. Separately, $A$ and $B$ are already MSTs. Our algorithm find the shortest edge that connects the two, which guarantees minimum cost. Therefore, out algorithm is correct.\\
+\\
+\textbf{\underline{Proof of time complexity:}}\\
+The first case should be a really simple check, depending on how the minimum spanning tree is stored, but it should not take more than $O(m)$. In the last case, the worst case scenario has us looking at all the edges in the graph, which is also $O(m)$. Thus, this algorithm runs in $O(m)$ time.
+
+
+\newpage
+\noindent \large{\textbf{3.} }\\
+\textbf{\underline{Proof:}}\\
+Let's say that the traveling salesman manages to visit every node with a path length that is less than the MST length. This would mean that he was able to find a path to all the nodes that is shorter than the MST path. However, by definition, a MST has the lowest weight of traveling to any node. Thus, it follows that there is no shorter way to reach any node in the graph, other than the MST path. Therefore, the optimal tour cannot be less than the MST. However, it can be greater, since the traveling salesman may have to return to the same node multiple times.\\
+\\
+\textbf{\underline{Algorithm:}}\\
+One possible algorithm is to construct the MST, and then list the nodes in pre-order traversal, adding the starting node at the very end.\\
+\\
+\textbf{\underline{Proof of correctness:}}\\
+Obviously, this path covers all nodes in the graph. In order to visit each node, the salesman will have to walk each "branch", so the weight of their total path will be at least the weight of the MST. The weight of this path is also less than or equal to twice the cost of the MST, because the salesman will not walk any path more than twice. They will walk it once to reach the desired node, and walk it again for the second and final time to "leave" the node. Thus, it follows that the total cost of any path produced by this algorithm is less than or equla to twice the total cost of the MST.
+
+\newpage
+\noindent \large{\textbf{4.} }
+
+\newpage
+\noindent \large{\textbf{5.} } \\
+We can solve this problem using divide and conquer\\
+\\
+If our array only has one element:\\
+\tab return $A[0]$\\
+Otherwise:\\
+\tab We split our array $A$ into two parts, \(A[0 \sim \frac{n}{2}]\) and \(A[\frac{n}{2} \sim n]\)\\
+\tab We recursively call our algorithm on the two halves\\
+\tab If they have the same majority element $m$\\
+\tab\tab return $m$\\
+\tab If one sub-array has a majority element $m$\\
+\tab\tab $count = 0$\\
+\tab\tab for every element $e$ in $A$:\\
+\tab\tab\tab if $e = m$\\
+\tab\tab\tab\tab $count++$\\
+\tab\tab if $count > \frac{n}{2}$\\
+\tab\tab\tab return $m$\\
+\tab If both sub-arrays have a majority element $m$ and $l$\\
+\tab\tab $mcount = 0$\\
+\tab\tab $lcount = 0$\\
+\tab\tab for every element $e$ in $A$:\\
+\tab\tab\tab if $e = m$\\
+\tab\tab\tab\tab $mcount++$\\
+\tab\tab\tab else if $e = l$\\
+\tab\tab\tab\tab $lcount++$\\
+\tab\tab if $mcount > \frac{n}{2}$\\
+\tab\tab\tab return $m$\\
+\tab\tab if $lcount > \frac{n}{2}$\\
+\tab\tab\tab return $l$\\
+\tab Else\\
+\tab\tab return false (no majority element)\\
+\\
+\textbf{\underline{Proof of correctness:}}\\
+Let's say that $A$ does in fact have a majority element $m$, but our algorithm returns false. This would mean that $m$ is either a majority element in only one half of the array, or not a majority element in either half. Consider the first case: $m$ is a majority element in one of the halves. If our algorithm returns false, this would mean that after iterating through the array, we determined that the number of occurrences of $m$ in $A$ is less than or equal to $\frac{n}{2}$, meaning that it isn't a majority element in $A$. Thus, we have a contradiction. In the second case, $m$ is not a majority element in either half of the array. It follows that if the occurence of $m$ in both halves is less than or equal to $\frac{n}{4}$, then the sum of $m$'s occurrences in the entire array must be less than or equal to $\frac{n}{2}$, meaning that $m$ is not a majority element in $A$, which is also a contradiction. Thus, our algorithm must be correct.\\
+\\
+\textbf{\underline{Proof of time complexity:}}\\
+Since we are halving our array with each iteration, that has a time complexity of $O(log_2n)$. When checking the array, we iterate over all $n$ elements, which has a time ocmplexity of $O(n)$. So our total time complexity is $O(nlog_{2}n)$.
+
+\end{document}
